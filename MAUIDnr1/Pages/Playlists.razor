@@ -65,12 +65,14 @@
 
 @if (PlaylistEditAction != PlaylistEditAction.None)
 {
-    <EditForm Model="PlayListToAddOrEdit" OnValidSubmit="SubmitPlayListClicked">
+    <EditForm Model="PlayListToAddOrEdit" 
+        OnValidSubmit="SubmitPlayListClicked">
         <DataAnnotationsValidator />
 
         Name:
         <br />
-        <InputText id="InputName" @bind-Value="@PlayListToAddOrEdit.Name" />
+        <InputText id="InputName" 
+            @bind-Value="@PlayListToAddOrEdit.Name" />
         <br />
         <br />
         <button class="btn btn-primary" type="submit">Submit</button>

@@ -16,44 +16,63 @@ else
             @onclick="ResetFilter">
         Reset
     </button>
-    <button class="btn btn-primary"
+    <button disabled="@Downloading" class="btn btn-primary"
             @onclick="NavigateToPlayListPage">
         Playlists
     </button>
 </div>
 
-@if (AppState.SelectedPlayList != null)
+@if (AppState.SelectedPlayList != null )
 {
     <div style="padding-top:4px;">
-        <button class="btn btn-secondary" style="margin-right:6px;"
+        <button class="btn btn-secondary" 
+            disabled="@Downloading"
+            style="margin-right:6px;"
             @onclick="AppState.ToggleShowPlaylistOnly">
             @AppState.ShowPlayListOnlyText
         </button>
         @if (!AppState.ShowPlayListOnly)
         {
-            <button class="btn btn-secondary" @onclick="AppState.AddAllToPlaylist">
+            <button class="btn btn-secondary"
+            disabled="@Downloading"
+            style="margin-right:6px;" 
+                @onclick="AppState.AddAllToPlaylist">
                 Add All
             </button>
-            <button class="btn btn-danger" @onclick="AppState.RemoveAllFromPlaylist">
+
+            <button class="btn btn-danger"
+            disabled="@Downloading"
+                @onclick="AppState.RemoveAllFromPlaylist">
                 Remove All
             </button>
+        }
+        else
+        {
             @if (PlaylistEpisodesNotDownloaded > 0)
             {
-                <button class="btn btn-danger" @onclick="DownloadPlaylist">
+                <button class="btn btn-secondary"
+                    disabled="@Downloading"
+                    style="margin-right:6px;" 
+                    @onclick="DownloadPlaylist">
                     Download @PlaylistEpisodesNotDownloaded of
                     @AppState.SelectedPlayList.Shows.Count
                 </button>
             }
-        }
-        else
-        {
-            <button class="btn btn-primary" @onclick="PlaySelectedPlayList">
+
+            <button class="btn btn-primary"
+                disabled="@Downloading"
+                style="margin-right:6px;" 
+                @onclick="PlaySelectedPlayList">
                 Play Playlist
             </button>
         }
     </div>
 }
-
+@if (StatusMessage != string.Empty)
+{
+    <br/>
+    <div style="font-style:italic;">@StatusMessage</div>
+}
 
 <hr size=7 />
 
@@ -69,6 +88,7 @@ else
     </div>
     <br />
     <button class="btn btn-primary"
+        disabled="@Downloading"
         @onclick="() => NavigateToDetailPage(show.ShowNumber)">
         Details
     </button>
@@ -79,14 +99,16 @@ else
         if (AppState.SelectedPlayListContainsShow(show))
         {
             <button class="btn btn-danger"
-        @onclick="() => AppState.RemoveShowFromPlaylist(show)">
+                disabled="@Downloading"
+                @onclick="() => AppState.RemoveShowFromPlaylist(show)">
                 Remove
             </button>
         }
         else
         {
             <button class="btn btn-secondary"
-        @onclick="() => AppState.AddShowToPlaylist(show)">
+                disabled="@Downloading"
+                @onclick="() => AppState.AddShowToPlaylist(show)">
                 Add
             </button>
         }
@@ -96,7 +118,7 @@ else
 }
 @if (AppState.AllShows.Count > 0 && AppState.ShowPlayListOnly == false)
 {
-    <button class="btn btn-primary" @onclick="LoadMoreShows">
+    <button disabled="@Downloading" class="btn btn-primary" @onclick="LoadMoreShows">
         Next @RecordsToRead
     </button>
 }

@@ -4,9 +4,6 @@ using Microsoft.UI.Windowing;
 using Windows.Graphics;
 #endif
 
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-
 public static class AppState
 {
     public static readonly int WindowWidth = 900;
@@ -14,9 +11,6 @@ public static class AppState
 #if WINDOWS
     public static Microsoft.UI.Windowing.AppWindow AppWindow { get; set; }
 #endif
-
-    [Inject]
-    public static ApiService ApiService { get; set; }
 
     // list of all playlists
     public static ObservableCollection<PlayList> PlayLists { get; set; }
@@ -196,8 +190,6 @@ public static class AppState
 
         }
     }
-
-
 
     /// <summary>
     /// Save list of playlists to local Json file

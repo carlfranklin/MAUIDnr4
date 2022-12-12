@@ -1,5 +1,4 @@
-﻿using Microsoft.JSInterop;
-namespace MAUIDnr1.Pages;
+﻿namespace MAUIDnr1.Pages;
 public partial class Playlists : ComponentBase
 {
     [Inject]
@@ -7,9 +6,6 @@ public partial class Playlists : ComponentBase
 
     [Inject]
     private IJSRuntime JSRuntime { get; set; }
-
-    [Inject]
-    private ApiService ApiService { get; set; }
 
     // are we adding, editing, or neither?
     protected PlaylistEditAction PlaylistEditAction { get; set; }
@@ -60,8 +56,10 @@ public partial class Playlists : ComponentBase
         AppState.SelectedPlayList = (from x in AppState.PlayLists
                                      where x.Id.ToString() == args.Value.ToString()
                                      select x).FirstOrDefault();
-        await LoadPlayListShowFileUrls();
-
+        if (AppState.ShowPlayListOnly)
+        {
+            AppState.ToggleShowPlaylistOnly();
+        }
     }
 
     /// <summary>
@@ -72,19 +70,9 @@ public partial class Playlists : ComponentBase
         if (AppState.PlayLists.Count == 1)
         {
             AppState.SelectedPlayList = AppState.PlayLists.First();
-            await LoadPlayListShowFileUrls();
-        }
-    }
-
-    private async Task LoadPlayListShowFileUrls()
-    {
-        // Load all the details
-        foreach (var show in AppState.SelectedPlayList.Shows)
-        {
-            if (show.ShowDetails == null)
+            if (AppState.ShowPlayListOnly)
             {
-                show.ShowDetails = new ShowDetails();
-                show.ShowDetails.File.Url = await ApiService.GetShowFileUrl(show.ShowNumber);
+                AppState.ToggleShowPlaylistOnly();
             }
         }
     }
@@ -122,6 +110,10 @@ public partial class Playlists : ComponentBase
         AppState.SavePlaylists();
         AppState.SelectedPlayList = null;
         PlaylistEditAction = PlaylistEditAction.None;
+        if (AppState.ShowPlayListOnly)
+        {
+            AppState.ToggleShowPlaylistOnly();
+        }
     }
 
     /// <summary>

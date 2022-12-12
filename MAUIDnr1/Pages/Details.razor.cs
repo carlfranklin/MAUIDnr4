@@ -102,7 +102,7 @@ public partial class Details : ComponentBase
         }
 
         // exit if there is no url specified
-        if (string.IsNullOrEmpty(ThisShow.ShowDetails.File.Url))
+        if (string.IsNullOrEmpty(ThisShow.Mp3Url))
         {
             AudioMessage = "Please enter a URL to an MP3 file";
             return;
@@ -115,7 +115,7 @@ public partial class Details : ComponentBase
             string cacheDir = FileSystem.Current.CacheDirectory;
 
             // get the fully qualified path to the local file
-            var fileName = ThisShow.ShowDetails.File.Url.Substring(8).Replace("/", "-");
+            var fileName = ThisShow.Mp3Url.Substring(8).Replace("/", "-");
             var localFile = $"{cacheDir}\\{fileName}";
 
             // download if need be
@@ -128,8 +128,8 @@ public partial class Details : ComponentBase
                 // this code downloads the file from the URL
                 using (var client = new HttpClient())
                 {
-                    var uri = new Uri(ThisShow.ShowDetails.File.Url);
-                    var response = await client.GetAsync(ThisShow.ShowDetails.File.Url);
+                    var uri = new Uri(ThisShow.Mp3Url);
+                    var response = await client.GetAsync(ThisShow.Mp3Url);
                     response.EnsureSuccessStatusCode();
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     {

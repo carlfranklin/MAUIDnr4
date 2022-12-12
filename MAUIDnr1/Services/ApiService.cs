@@ -1,53 +1,15 @@
-﻿using System.Text;
-using Newtonsoft.Json;
-
-namespace MAUIDnr1.Services;
+﻿namespace MAUIDnr1.Services;
 
 public class ApiService
 {
     private HttpClient httpClient; //
     private string ShowName = "dotnetrocks";
-    //string baseUrl = "https://pwopclientapi.azurewebsites.net/shows/";
-    string baseUrl = "https://localhost:44371/shows/";
+    string baseUrl = "https://pwopclientapi.azurewebsites.net/shows/";
     
 
     public ApiService()
     {
         httpClient = new HttpClient() { BaseAddress = new Uri(baseUrl) };
-    }
-
-    public async Task<string> GetShowFileUrl(int ShowNumber)
-    {
-        var fileName = $"{FileSystem.Current.CacheDirectory}\\show-{ShowNumber}-url.json";
-        try
-        {
-            if (AppState.IsOnline)
-            {
-                // We have an Internet connection. Download as usual
-                string Url = $"{ShowName}/{ShowNumber}/getmp3fileurl";
-                var result = await httpClient.GetAsync(Url);
-                result.EnsureSuccessStatusCode();
-                var response = await result.Content.ReadAsStringAsync();
-
-                // save the json file offline
-                System.IO.File.WriteAllText(fileName, response);
-
-                return response;
-            }
-            else if (System.IO.File.Exists(fileName))
-            {
-                // We are offline and the json file exists. Load it and return
-                return System.IO.File.ReadAllText(fileName);
-            }
-            else
-            {
-                return "";
-            }
-        }
-        catch (Exception ex)
-        {
-            return "";
-        }
     }
 
     /// <summary>
@@ -57,6 +19,7 @@ public class ApiService
     public async Task<List<Show>> GetAllShows()
     {
         var fileName = $"{FileSystem.Current.CacheDirectory}\\allShows.json";
+        
         try
         {
             if (AppState.IsOnline)

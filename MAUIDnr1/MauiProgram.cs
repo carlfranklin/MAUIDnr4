@@ -2,8 +2,11 @@
 global using MAUIDnr1.Services;
 global using MAUIDnr1.Models;
 global using Microsoft.AspNetCore.Components;
+global using Microsoft.JSInterop;
+global using Newtonsoft.Json;
+global using System.Collections.ObjectModel;
+global using System.Text;
 using Microsoft.AspNetCore.Components.WebView.Maui;
-using Microsoft.JSInterop;
 
 namespace MAUIDnr1;
 
@@ -21,7 +24,7 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
 #if DEBUG
-        builder.Services.AddBlazorWebViewDeveloperTools(); //
+        builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
         builder.Services.AddSingleton(AudioManager.Current);
         builder.Services.AddSingleton<ApiService>();

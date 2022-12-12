@@ -1,6 +1,4 @@
-﻿using Microsoft.UI.Xaml.Documents;
-
-namespace MAUIDnr1.Pages;
+﻿namespace MAUIDnr1.Pages;
 public partial class Index : ComponentBase
 {
     [Inject]
@@ -11,6 +9,10 @@ public partial class Index : ComponentBase
 
     // we read 20 records at a time when loading more shows
     private int RecordsToRead { get; set; } = 20;
+
+    protected string StatusMessage {get; set;} = string.Empty;
+
+    protected bool Downloading = false;
 
     /// <summary>
     /// EpisodeFilter needs to be defined here in Index
@@ -53,13 +55,13 @@ public partial class Index : ComponentBase
     public bool IsDownloaded(Show show)
     {
         // exit if there is no url specified
-        if (!string.IsNullOrEmpty(show.ShowDetails.File.Url))
+        if (!string.IsNullOrEmpty(show.Mp3Url))
         {
             // This is where we are storing local audio files
             string cacheDir = FileSystem.Current.CacheDirectory;
 
             // get the fully qualified path to the local file
-            var fileName = show.ShowDetails.File.Url.Substring(8).Replace("/", "-");
+            var fileName = show.Mp3Url.Substring(8).Replace("/", "-");
             var localFile = $"{cacheDir}\\{fileName}";
 
             return System.IO.File.Exists(localFile);
@@ -72,11 +74,12 @@ public partial class Index : ComponentBase
     {
         get
         {
-            if (AppState.SelectedPlayList == null) return 0;
+            if (AppState.SelectedPlayList == null) 
+                return 0;
             var count = 0;
             foreach (var show in AppState.SelectedPlayList.Shows)
             {
-                if (IsDownloaded(show))
+                if (!IsDownloaded(show))
                 {
                     count++;
                 }
@@ -89,14 +92,44 @@ public partial class Index : ComponentBase
     {
         if (!AppState.IsOnline) return;
         if (AppState.SelectedPlayList == null) return;
+        Downloading = true;
+
+        // This is where we are storing local audio files
+        string cacheDir = FileSystem.Current.CacheDirectory;
+        int count = 0;
+        int total = PlaylistEpisodesNotDownloaded;
         foreach (var show in AppState.SelectedPlayList.Shows)
         {
-            if (IsDownloaded(show))
+            if (!IsDownloaded(show))
             {
                 // download to cache
-                await Task.Delay(0);
+                count++;
+                StatusMessage = $"Downloading {count} of {total}";
+                await InvokeAsync(StateHasChanged);
+
+                // get the fully qualified path to the local file
+                var fileName = show.Mp3Url.Substring(8).Replace("/", "-");
+                var localFile = $"{cacheDir}\\{fileName}";
+
+                // this code downloads the file from the URL
+                using (var client = new HttpClient())
+                {
+                    var uri = new Uri(show.Mp3Url);
+                    var response = await client.GetAsync(show.Mp3Url);
+                    response.EnsureSuccessStatusCode();
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        var fileInfo = new FileInfo(localFile);
+                        using (var fileStream = fileInfo.OpenWrite())
+                        {
+                            await stream.CopyToAsync(fileStream);
+                        }
+                    }
+                }
             }
         }
+        StatusMessage = "";
+        Downloading = false;
     }
 
     protected void PlaySelectedPlayList()
