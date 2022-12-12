@@ -107,6 +107,9 @@ public partial class Index : ComponentBase
                 StatusMessage = $"Downloading {count} of {total}";
                 await InvokeAsync(StateHasChanged);
 
+                // Download the show with details so the data is cached
+                var thisShow = await _apiService.GetShowWithDetails(show.ShowNumber);
+
                 // get the fully qualified path to the local file
                 var fileName = show.Mp3Url.Substring(8).Replace("/", "-");
                 var localFile = $"{cacheDir}\\{fileName}";

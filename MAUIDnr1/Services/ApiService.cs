@@ -1,5 +1,4 @@
 ﻿namespace MAUIDnr1.Services;
-
 public class ApiService
 {
     private HttpClient httpClient; //
@@ -168,6 +167,16 @@ public class ApiService
                 // save the json file offline
                 System.IO.File.WriteAllText(fileName, response);
 
+                // download and save the guest image
+                foreach (var guest in show.ShowDetails.Guests)
+                {
+                    var justFileName = Path.GetFileName(guest.PhotoUrl);
+                    var photoFileName = $"{FileSystem.Current.CacheDirectory}\\show-{ShowNumber}-{justFileName}";
+                    using var httpResponse = await httpClient.GetAsync(guest.PhotoUrl).ConfigureAwait(false);
+                    var bytes = await httpResponse.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    System.IO.File.WriteAllBytes(photoFileName, bytes);
+                }
+
                 return show;
             }
             else if (System.IO.File.Exists(fileName))
@@ -179,7 +188,18 @@ public class ApiService
                 if (show.ShowDetails == null)
                     return null;
                 else
+                {
+                    foreach (var guest in show.ShowDetails.Guests)
+                    {
+                        var justFileName = Path.GetFileName(guest.PhotoUrl);
+                        var photoFileName = $"{FileSystem.Current.CacheDirectory}\\show-{ShowNumber}-{justFileName}";
+                        var imageBytes = System.IO.File.ReadAllBytes(photoFileName);
+                        var imageSource = Convert.ToBase64String(imageBytes);
+                        imageSource = string.Format("data:image/png;base64,{0}", imageSource);
+                        guest.PhotoUrl = imageSource;
+                    }
                     return show;
+                }
             }
             else
             {
