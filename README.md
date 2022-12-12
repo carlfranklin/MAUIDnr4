@@ -1229,6 +1229,42 @@ I added this markup to show the `StatusMessage`
 }
 ```
 
+#### Run the App and select the PlayList button
+
+![image-20221212111242467](md-images/image-20221212111242467.png)
+
+Select the **Add** button to add a playlist
+
+![image-20221212111346110](md-images/image-20221212111346110.png)
+
+Name it **My PlayList** and select the **Submit** button:
+
+![image-20221212111501732](md-images/image-20221212111501732.png)
+
+Select the **Back Arrow** button to go back to the Index page
+
+![image-20221212111552197](md-images/image-20221212111552197.png)
+
+Add a few episodes to the playlist by selecting their **Add** buttons
+
+![image-20221212111802029](md-images/image-20221212111802029.png)
+
+Scroll to the top and select the **Show Playlist** button.
+
+![image-20221212111854522](md-images/image-20221212111854522.png)
+
+Click the **Download** button to download the episodes in your playlist
+
+![image-20221212112011066](md-images/image-20221212112011066.png)
+
+Note the status message:
+
+![image-20221212112125970](md-images/image-20221212112125970.png)
+
+Once the files are done downloading, the **Download** button goes away, and you can play the playlist while offline:
+
+![image-20221212112223717](md-images/image-20221212112223717.png)
+
 ## Summary
 
 In this episode we picked up where we left off in the code we wrote in episode 30 (https://github.com/carlfranklin/MAUIDnr3) and added a feature to pre-download playlist episodes so we can listen when we're offline. 
