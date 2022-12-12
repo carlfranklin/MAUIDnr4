@@ -103,6 +103,78 @@ public static class MauiProgram
 }
 ```
 
+#### Fix a bug in ApiService.cs
+
+The `GetShowWithDetails` method, when online, saves the show information to a local JSON file, but does not save the guest images. So I added code to save the guest images.
+
+When offline, the images are loaded and encoded as base64, so they can be shown. You can't directly link to an image file in the cache folder.
+
+Replace the `GetShowWithDetails` method in *ApiService.cs* with the following:
+
+```c#
+public async Task<Show> GetShowWithDetails(int ShowNumber)
+{
+    var fileName = $"{FileSystem.Current.CacheDirectory}\\show-{ShowNumber}.json";
+    try
+    {
+        if (AppState.IsOnline)
+        {
+            // We have an Internet connection. Download as usual
+            string Url = $"{ShowName}/{ShowNumber}/getwithdetails";
+            var result = await httpClient.GetAsync(Url);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadAsStringAsync();
+            var show = JsonConvert.DeserializeObject<Show>(response);
+
+            // save the json file offline
+            System.IO.File.WriteAllText(fileName, response);
+
+            // download and save the guest image
+            foreach (var guest in show.ShowDetails.Guests)
+            {
+                var justFileName = Path.GetFileName(guest.PhotoUrl);
+                var photoFileName = $"{FileSystem.Current.CacheDirectory}\\show-{ShowNumber}-{justFileName}";
+                using var httpResponse = await httpClient.GetAsync(guest.PhotoUrl).ConfigureAwait(false);
+                var bytes = await httpResponse.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                System.IO.File.WriteAllBytes(photoFileName, bytes);
+            }
+
+            return show;
+        }
+        else if (System.IO.File.Exists(fileName))
+        {
+            // We are offline and the json file exists. Load it and return
+            var json = System.IO.File.ReadAllText(fileName);
+            var show = JsonConvert.DeserializeObject<Show>(json);
+            // return null if there are no details
+            if (show.ShowDetails == null)
+                return null;
+            else
+            {
+                foreach (var guest in show.ShowDetails.Guests)
+                {
+                    var justFileName = Path.GetFileName(guest.PhotoUrl);
+                    var photoFileName = $"{FileSystem.Current.CacheDirectory}\\show-{ShowNumber}-{justFileName}";
+                    var imageBytes = System.IO.File.ReadAllBytes(photoFileName);
+                    var imageSource = Convert.ToBase64String(imageBytes);
+                    imageSource = string.Format("data:image/png;base64,{0}", imageSource);
+                    guest.PhotoUrl = imageSource;
+                }
+                return show;
+            }
+        }
+        else
+        {
+            return new Show();
+        }
+    }
+    catch (Exception ex)
+    {
+        return new Show();
+    }
+}
+```
+
 #### Fix a bug in PlayList.razor.cs
 
 Replace *PlayList.razor.cs* with the following:
@@ -778,6 +850,10 @@ public partial class Index : ComponentBase
                 StatusMessage = $"Downloading {count} of {total}";
                 await InvokeAsync(StateHasChanged);
 
+                // Download the show with details so the data is cached
+                var thisShow = await 
+                    _apiService.GetShowWithDetails(show.ShowNumber);
+
                 // get the fully qualified path to the local file
                 var fileName = show.Mp3Url.Substring(8).Replace("/", "-");
                 var localFile = $"{cacheDir}\\{fileName}";
@@ -886,7 +962,8 @@ public partial class Index : ComponentBase
             // Get the shownumbers
             AppState.ShowNumbers = await _apiService.GetShowNumbers();
             // return if there are none
-            if (AppState.ShowNumbers == null || AppState.ShowNumbers.Count == 0) return;
+            if (AppState.ShowNumbers == null 
+                || AppState.ShowNumbers.Count == 0) return;
             // Set the last show number
             AppState.LastShowNumber = AppState.ShowNumbers.First<int>() + 1;
         }
@@ -937,7 +1014,6 @@ public partial class Index : ComponentBase
     {
         _navigationManager.NavigateTo("playlists");
     }
-
 
     /// <summary>
     /// Only load playlists and get next batch of shows
