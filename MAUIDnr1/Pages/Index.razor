@@ -1,5 +1,4 @@
 ﻿@page "/"
-@inject ApiService ApiService
 
 @if (AppState.SelectedPlayList != null)
 {
@@ -22,10 +21,10 @@ else
     </button>
 </div>
 
-@if (AppState.SelectedPlayList != null )
+@if (AppState.SelectedPlayList != null)
 {
     <div style="padding-top:4px;">
-        <button class="btn btn-secondary" 
+        <button class="btn btn-secondary"
             disabled="@Downloading"
             style="margin-right:6px;"
             @onclick="AppState.ToggleShowPlaylistOnly">
@@ -35,14 +34,14 @@ else
         {
             <button class="btn btn-secondary"
             disabled="@Downloading"
-            style="margin-right:6px;" 
-                @onclick="AppState.AddAllToPlaylist">
+            style="margin-right:6px;"
+            @onclick="AppState.AddAllToPlaylist">
                 Add All
             </button>
 
             <button class="btn btn-danger"
             disabled="@Downloading"
-                @onclick="AppState.RemoveAllFromPlaylist">
+            @onclick="AppState.RemoveAllFromPlaylist">
                 Remove All
             </button>
         }
@@ -51,18 +50,18 @@ else
             @if (PlaylistEpisodesNotDownloaded > 0)
             {
                 <button class="btn btn-secondary"
-                    disabled="@Downloading"
-                    style="margin-right:6px;" 
-                    @onclick="DownloadPlaylist">
+            disabled="@Downloading"
+            style="margin-right:6px;"
+            @onclick="DownloadPlaylist">
                     Download @PlaylistEpisodesNotDownloaded of
                     @AppState.SelectedPlayList.Shows.Count
                 </button>
             }
 
             <button class="btn btn-primary"
-                disabled="@Downloading"
-                style="margin-right:6px;" 
-                @onclick="PlaySelectedPlayList">
+            disabled="@Downloading"
+            style="margin-right:6px;"
+            @onclick="PlaySelectedPlayList">
                 Play Playlist
             </button>
         }
@@ -70,7 +69,7 @@ else
 }
 @if (StatusMessage != string.Empty)
 {
-    <br/>
+    <br />
     <div style="font-style:italic;">@StatusMessage</div>
 }
 
@@ -99,16 +98,16 @@ else
         if (AppState.SelectedPlayListContainsShow(show))
         {
             <button class="btn btn-danger"
-                disabled="@Downloading"
-                @onclick="() => AppState.RemoveShowFromPlaylist(show)">
+        disabled="@Downloading"
+        @onclick="() => AppState.RemoveShowFromPlaylist(show)">
                 Remove
             </button>
         }
         else
         {
             <button class="btn btn-secondary"
-                disabled="@Downloading"
-                @onclick="() => AppState.AddShowToPlaylist(show)">
+        disabled="@Downloading"
+        @onclick="() => AppState.AddShowToPlaylist(show)">
                 Add
             </button>
         }

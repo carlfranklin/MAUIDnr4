@@ -10,7 +10,7 @@ public partial class Index : ComponentBase
     // we read 20 records at a time when loading more shows
     private int RecordsToRead { get; set; } = 20;
 
-    protected string StatusMessage {get; set;} = string.Empty;
+    protected string StatusMessage { get; set; } = string.Empty;
 
     protected bool Downloading = false;
 
@@ -74,7 +74,7 @@ public partial class Index : ComponentBase
     {
         get
         {
-            if (AppState.SelectedPlayList == null) 
+            if (AppState.SelectedPlayList == null)
                 return 0;
             var count = 0;
             foreach (var show in AppState.SelectedPlayList.Shows)
@@ -108,7 +108,8 @@ public partial class Index : ComponentBase
                 await InvokeAsync(StateHasChanged);
 
                 // Download the show with details so the data is cached
-                var thisShow = await _apiService.GetShowWithDetails(show.ShowNumber);
+                var thisShow = await
+                    _apiService.GetShowWithDetails(show.ShowNumber);
 
                 // get the fully qualified path to the local file
                 var fileName = show.Mp3Url.Substring(8).Replace("/", "-");
@@ -218,7 +219,8 @@ public partial class Index : ComponentBase
             // Get the shownumbers
             AppState.ShowNumbers = await _apiService.GetShowNumbers();
             // return if there are none
-            if (AppState.ShowNumbers == null || AppState.ShowNumbers.Count == 0) return;
+            if (AppState.ShowNumbers == null
+                || AppState.ShowNumbers.Count == 0) return;
             // Set the last show number
             AppState.LastShowNumber = AppState.ShowNumbers.First<int>() + 1;
         }
@@ -269,7 +271,6 @@ public partial class Index : ComponentBase
     {
         _navigationManager.NavigateTo("playlists");
     }
-
 
     /// <summary>
     /// Only load playlists and get next batch of shows

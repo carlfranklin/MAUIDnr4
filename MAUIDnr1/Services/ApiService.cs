@@ -1,10 +1,13 @@
-﻿namespace MAUIDnr1.Services;
+﻿using System.Text;
+using Newtonsoft.Json;
+
+namespace MAUIDnr1.Services;
+
 public class ApiService
 {
     private HttpClient httpClient; //
     private string ShowName = "dotnetrocks";
     string baseUrl = "https://pwopclientapi.azurewebsites.net/shows/";
-    
 
     public ApiService()
     {
@@ -18,7 +21,6 @@ public class ApiService
     public async Task<List<Show>> GetAllShows()
     {
         var fileName = $"{FileSystem.Current.CacheDirectory}\\allShows.json";
-        
         try
         {
             if (AppState.IsOnline)

@@ -1,5 +1,4 @@
 ﻿namespace MAUIDnr1.Models;
-
 public class Show
 {
     public int Id { get; set; }
@@ -18,7 +17,7 @@ public class Show
     {
         get
         {
-            return $"{ShowNumber} - {DatePublished.ToShortDateString()} - {ShowTitle}";
+            return ShowNumber.ToString() + " - " + ((DateTime)DatePublished).ToShortDateString() + " - " + ShowTitle;
         }
     }
 }

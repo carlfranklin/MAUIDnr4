@@ -1,17 +1,7 @@
-﻿#if WINDOWS
-using Microsoft.UI;
-using Microsoft.UI.Windowing;
-using Windows.Graphics;
-#endif
+﻿namespace MAUIDnr1.Services;
 
 public static class AppState
 {
-    public static readonly int WindowWidth = 900;
-    public static readonly int WindowHeight = 600;
-#if WINDOWS
-    public static Microsoft.UI.Windowing.AppWindow AppWindow { get; set; }
-#endif
-
     // list of all playlists
     public static ObservableCollection<PlayList> PlayLists { get; set; }
             = new ObservableCollection<PlayList>();
@@ -149,7 +139,7 @@ public static class AppState
             BackupEpisodeFilter = EpisodeFilter;    // filter
             AllShowsBackupString = JsonConvert.SerializeObject(AllShows);   // shows
             LastShowNumberBackup = LastShowNumber;  // last show number
-                                                    // clear the filter
+            // clear the filter
             EpisodeFilter = "";
             // change the set of displayed shows
             AllShows = new ObservableCollection<Show>(SelectedPlayList.Shows);

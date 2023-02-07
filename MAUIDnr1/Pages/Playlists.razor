@@ -65,14 +65,12 @@
 
 @if (PlaylistEditAction != PlaylistEditAction.None)
 {
-    <EditForm Model="PlayListToAddOrEdit" 
-        OnValidSubmit="SubmitPlayListClicked">
+    <EditForm Model="PlayListToAddOrEdit" OnValidSubmit="SubmitPlayListClicked">
         <DataAnnotationsValidator />
 
         Name:
         <br />
-        <InputText id="InputName" 
-            @bind-Value="@PlayListToAddOrEdit.Name" />
+        <InputText id="InputName" @bind-Value="@PlayListToAddOrEdit.Name" />
         <br />
         <br />
         <button class="btn btn-primary" type="submit">Submit</button>
@@ -84,28 +82,4 @@
 
         <ValidationSummary />
     </EditForm>
-
-    @if (PlayListToAddOrEdit.Shows.Count > 0)
-    {
-        <br />
-        <br />
-        @foreach (var show in PlayListToAddOrEdit.Shows)
-        {
-            <div style="padding:4px;">
-                @if (@show != @PlayListToAddOrEdit.Shows.First())
-                {
-                    <span @onclick="() => MoveUp(show)" class="oi oi-arrow-top"
-          style="padding-right:4px;" aria-hidden="true"></span>
-                }
-                @if (@show != @PlayListToAddOrEdit.Shows.Last())
-                {
-                    <span @onclick="() => MoveDown(show)" class="oi oi-arrow-bottom"
-          style="padding-right:4px;" aria-hidden="true"></span>
-                }
-                @show.ShowTitle
-            </div>
-        }
-    }
-    <br />
-    <br />
 }
